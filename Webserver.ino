@@ -312,24 +312,20 @@ void do_pending_Actions(void){
   }
   showFablabText(PIN_OUTSIDE_TEXT, 50);
   showFablabText(PIN_INSIDE_TEXT, 50);
-
-  uint32_t Now = millis();
-  if ((Now % 60000) < 2000){
+  uint32_t delta = millis() % 60000;
+  if (delta < 500) {
+    rotation = 1;
+  }  else
+  if (delta < 1000) {
+    rotation = 2;
+  } else
+  if (delta < 1500) {
+    rotation = 3;
+  } else
+  if (delta < 2000) {
     rotation = 0;
   }
-  if ((Now % 60000) < 1500){
-    rotation = 3;
-    Serial.println("Rotation 2");
-  }
-  if ((Now % 60000) < 1000){
-    rotation = 2;
-    Serial.println("Rotation 3");
-  }
-  if ((Now % 60000) < 500){
-    rotation = 1;
-    Serial.println("Rotation 0");
-  }
-
+  delay(100);
   showFablabLogo(PIN_INSIDE_LOGO, rotation);
   showFablabLogo(PIN_OUTSIDE_LOGO, rotation);
 }
