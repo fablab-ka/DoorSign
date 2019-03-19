@@ -1,6 +1,0 @@
-.\bin\avrdude -c usbtiny -C .\etc\avrdude.conf -p t85
-.\bin\avrdude -c usbtiny -C .\etc\avrdude.conf -p t85 -U lfuse:w:0xf1:m -U hfuse:w:0xdf:m -U efuse:w:0xfe:m
-5f:   RSTDISADBLE!!!
-.\bin\avrdude -c usbtiny -C .\etc\avrdude.conf -p t85 -U lfuse:w:0xf1:m -U hfuse:w:0x5f:m -U efuse:w:0xfe:m
-                                                      
-                                                      
