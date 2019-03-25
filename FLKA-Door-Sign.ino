@@ -17,7 +17,7 @@ extern "C" {
 #define PIN_INSIDE_TEXT  12  // D6
 #define PIN_INSIDE_LOGO  13  // D7
 #define PIN_OUTSIDE_TEXT 14  // D5
-#define PIN_OUTSIDE_LOGO 16  // D0
+#define PIN_OUTSIDE_LOGO  4  // D2
 
 #define LED_COUNT_LOGO  10
 #define LED_COUNT_TEXT  31
@@ -37,8 +37,8 @@ extern "C" {
 
 #define HOSTNAME   "doorsign"
 #define MYSSID     "FLKA-DOORSIGN"
-#define MYWLANPWD  ""
-#define MYOTAPWD   ""
+
+#include "_secrets.h"
 
 char myIPaddress[18]="000.000.000.000  ";
 
