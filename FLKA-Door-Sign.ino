@@ -14,6 +14,9 @@ extern "C" {
 // Basiskonfigurationen ==============================================================================//
   
 // dont use pins 0,2,15, as they are needed for reboot and flash
+#define NEOTYPE NEO_BRG
+#define NEOSPEED NEO_KHZ800
+
 #define PIN_INSIDE_TEXT  12  // D6
 #define PIN_INSIDE_LOGO  13  // D7
 #define PIN_OUTSIDE_TEXT 14  // D5
@@ -30,7 +33,7 @@ extern "C" {
 #define TEXT_HUE 110
 #define TEXT_SATURATION 0.15
 
-#define LOGO_LEAF_OFFSET    0
+#define LOGO_LEAF_OFFSET   0
 #define LOGO_BUBBLE_OFFSET 10
 #define LOGO_PENCIL_OFFSET 20
 #define LOGO_WRENCH_OFFSET 30 
@@ -40,13 +43,22 @@ extern "C" {
 
 #include "_secrets.h"
 
+#if !defined(MYWLANPWD)
+  #error "MYWLANPWD" must be defined in _secrets.h
+#endif
+#if !defined(MYOTAPWD)
+  #error "MYOTAPWD" must be defined in _secrets.h
+#endif
+
 char myIPaddress[18]="000.000.000.000  ";
 
 
 void setup(){
+  delay(300);
   pinMode( 0,OUTPUT);
   digitalWrite(0, HIGH);
   Serial.begin(115200);
+  Serial.println("Doorsign started!");
   WiFi.hostname(HOSTNAME);
   ETS_UART_INTR_DISABLE();
   wifi_station_disconnect();
@@ -69,13 +81,14 @@ void setup(){
   Serial.println( myIPaddress );
   ArduinoOTA.setHostname(HOSTNAME);
   ArduinoOTA.setPassword(MYOTAPWD);
+  Serial.println("OTA Start:");
   ArduinoOTA.begin();
 }
 
 
 void showFablabLogo(uint8_t pin, uint8_t rotate = 0, bool show=true) {
   uint8_t rotationOffset = (rotate % 4) * 10;
-  Adafruit_NeoPixel strip = Adafruit_NeoPixel(4*LED_COUNT_LOGO, pin, NEO_GRB + NEO_KHZ800);  
+  Adafruit_NeoPixel strip = Adafruit_NeoPixel(4*LED_COUNT_LOGO, pin, NEOTYPE + NEOSPEED);  
   strip.begin();
   if (show) {
     for (uint16_t i =0; i< (LED_COUNT_LOGO); i++) {
@@ -83,6 +96,7 @@ void showFablabLogo(uint8_t pin, uint8_t rotate = 0, bool show=true) {
       strip.setPixelColor(((LOGO_BUBBLE_OFFSET+rotationOffset) % 40) + i, LOGO_BUBBLE_COLOR);
       strip.setPixelColor(((LOGO_PENCIL_OFFSET+rotationOffset) % 40) + i, LOGO_PENCIL_COLOR);
       strip.setPixelColor(((LOGO_WRENCH_OFFSET+rotationOffset) % 40) + i, LOGO_WRENCH_COLOR);
+      yield();
     }
     
   } else {
@@ -94,11 +108,12 @@ void showFablabLogo(uint8_t pin, uint8_t rotate = 0, bool show=true) {
 }
 
 void showFablabText(uint8_t pin, uint8_t brightness) {
-  Adafruit_NeoPixel strip = Adafruit_NeoPixel(LED_COUNT_TEXT, pin, NEO_GRB + NEO_KHZ800);  
+  Adafruit_NeoPixel strip = Adafruit_NeoPixel(LED_COUNT_TEXT, pin, NEOTYPE + NEOSPEED);  
   strip.begin();
   for (uint16_t i =0; i< (LED_COUNT_TEXT); i++) {
     RGB colorVal = HSLToRGB(HSL(TEXT_HUE, TEXT_SATURATION, brightness/100.0));
     strip.setPixelColor( i, colorVal.NeoColor() );
+    yield();
   }
   strip.show();
 }
@@ -121,7 +136,7 @@ void loop() {
   if (delta < 2000) {
     rotation = 0;
   }
-  delay(100);
+  delay(250);
   showFablabLogo(PIN_INSIDE_LOGO, rotation);
   showFablabLogo(PIN_OUTSIDE_LOGO, rotation);
   ArduinoOTA.handle();
